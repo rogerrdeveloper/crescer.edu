@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crescer Edu — Painel do Professor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --verde: #4CAF50;
+            --verde-escuro: #2E7D32;
+            --verde-claro: #81C784;
+            --verde-menta: #E8F5E9;
+            --marrom: #5D4037;
+            --creme: #FFF8F0;
+            --branco: #FFFFFF;
+            --text: #2C1A0E;
+            --text-mid: #5D4037;
+            --text-light: #8D6E63;
+            --accent: #FF7043;
+            --radius: 16px;
+            --shadow: 0 4px 20px rgba(46,125,50,0.10);
+            --sidebar-width: 280px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background: var(--creme);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--verde-escuro);
+            color: white;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            font-family: 'Fraunces', serif;
+            font-size: 24px;
+            margin-bottom: 48px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .sidebar-logo svg {
+            width: 32px;
+            height: 32px;
+            color: var(--verde-claro);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: var(--verde-claro);
+            color: var(--verde-escuro);
+            font-weight: 700;
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            color: #FFCDD2;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 40px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 28px;
+            color: var(--verde-escuro);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--verde-claro);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--verde-escuro);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-card .icon-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .stat-card h4 {
+            color: var(--text-light);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--verde-escuro);
+        }
+
+        /* Trails Section */
+        .trails-section {
+            background: white;
+            padding: 32px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .btn-add {
+            background: var(--verde-escuro);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-add svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn-add:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(46,125,50,0.2); }
+
+        .trail-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .trail-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border: 1px solid #E8F5E9;
+            border-radius: 12px;
+            gap: 20px;
+            transition: all 0.2s;
+        }
+
+        .trail-item:hover {
+            border-color: var(--verde-claro);
+            background: #FAFAFA;
+        }
+
+        .trail-icon-box {
+            width: 56px;
+            height: 56px;
+            background: var(--verde-menta);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--verde-escuro);
+        }
+
+        .trail-icon-box svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .trail-info { flex: 1; }
+        .trail-info h5 { font-size: 16px; margin-bottom: 4px; font-weight: 700; }
+        .trail-info p { font-size: 13px; color: var(--text-light); }
+
+        /* Students Table */
+        .students-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 32px;
+        }
+
+        .students-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        .students-table th, .students-table td {
+            text-align: left;
+            padding: 16px 20px;
+            border-bottom: 1px solid #F5F5F5;
+        }
+
+        .students-table th {
+            color: var(--text-light);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .status-active { background: #E8F5E9; color: var(--verde-escuro); }
+        .status-inactive { background: #FFEBEE; color: #C62828; }
+        
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: #F0F0F0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--verde);
+            border-radius: 4px;
+        }
+
+        /* Responsive / Mobile Menu */
+        .mobile-header {
+            display: none;
+            position: sticky;
+            top: 0;
+            background: var(--verde-escuro);
+            padding: 16px 24px;
+            z-index: 1000;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .hamburger {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0;
+        }
+
+        .hamburger svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 95;
+            backdrop-filter: blur(2px);
+        }
+
+        @media (max-width: 1024px) {
+            :root {
+                --sidebar-width: 0px;
+            }
+            
+            body {
+                display: block;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .sidebar {
+                left: -280px;
+                transition: left 0.3s ease;
+                width: 280px;
+            }
+
+            body.sidebar-open .sidebar {
+                left: 0;
+            }
+
+            body.sidebar-open .sidebar-overlay {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 24px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .analytics-box {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .trail-item {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+                gap: 12px;
+            }
+
+            .trail-info {
+                width: 100%;
+            }
+
+            .trail-item div[style*="text-align: right"] {
+                text-align: left !important;
+                width: 100%;
+            }
+
+            .students-card {
+                padding: 16px;
+                overflow-x: auto;
+            }
+            
+            .students-table {
+                min-width: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="mobile-header">
+    <div class="sidebar-logo" style="margin-bottom: 0; font-size: 20px;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-4.03 9-9 9S3 15.97 3 11A9 9 0 0 1 12 2z"/><path d="M12 7v5l3 3"/></svg>
+        Crescer <span>Edu</span>
+    </div>
+    <button class="hamburger" id="menuToggle">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-4.03 9-9 9S3 15.97 3 11A9 9 0 0 1 12 2z"/><path d="M12 7v5l3 3"/></svg>
+        Crescer <span>Edu</span>
+    </div>
+    <a href="#" class="nav-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+        Dashboard
+    </a>
+    <a href="#" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Meus Alunos
+    </a>
+    <a href="#" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Trilhas
+    </a>
+    <a href="#" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Avaliações
+    </a>
+    <a href="#" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9l-3 3H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+        Recursos
+    </a>
+    <a href="#" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Configurações
+    </a>
+    <a href="login.html" class="nav-item logout-btn" onclick="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+        Sair
+    </a>
+</div>
+
+<div class="main-content">
+    <div class="header">
+        <h1 id="welcomeText">Olá, Prof. Carlos!</h1>
+        <div class="user-profile">
+            <div style="text-align: right;">
+                <p id="profName" style="font-weight: 700; font-size: 14px;">Carlos Lima</p>
+                <p style="font-size: 12px; color: var(--text-light);">Professor de Tecnologia</p>
+            </div>
+            <div class="avatar" id="avatarBox">CL</div>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="icon-box" style="background: #E3F2FD; color: #1976D2;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <h4>Total de Alunos</h4>
+            <div class="value">124</div>
+        </div>
+        <div class="stat-card">
+            <div class="icon-box" style="background: #E8F5E9; color: #2E7D32;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <h4>Trilhas Ativas</h4>
+            <div class="value">8</div>
+        </div>
+        <div class="stat-card">
+            <div class="icon-box" style="background: #FFF3E0; color: #E65100;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <h4>Engajamento</h4>
+            <div class="value">92%</div>
+        </div>
+        <div class="stat-card">
+            <div class="icon-box" style="background: #F3E5F5; color: #7B1FA2;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <h4>Pendentes</h4>
+            <div class="value">15</div>
+        </div>
+    </div>
+
+    <div class="trails-section">
+        <div class="section-header">
+            <h3 style="font-family: 'Fraunces', serif; color: var(--verde-escuro);">Minhas Trilhas de Aprendizado</h3>
+            <button class="btn-add">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Nova Trilha
+            </button>
+        </div>
+        <div class="trail-list">
+            <div class="trail-item">
+                <div class="trail-icon-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </div>
+                <div class="trail-info">
+                    <h5>Desenvolvimento Web Moderno</h5>
+                    <p>45 alunos inscritos • Nível Intermediário</p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="font-weight: 700; color: var(--verde);">Ativa</p>
+                    <p style="font-size: 12px; color: var(--text-light);">Há 2 dias</p>
+                </div>
+            </div>
+            <div class="trail-item">
+                <div class="trail-icon-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+                </div>
+                <div class="trail-info">
+                    <h5>Introdução à IA e Ética</h5>
+                    <p>62 alunos inscritos • Nível Iniciante</p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="font-weight: 700; color: var(--verde);">Ativa</p>
+                    <p style="font-size: 12px; color: var(--text-light);">Há 5 horas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="students-card">
+        <h3 style="font-family: 'Fraunces', serif; color: var(--verde-escuro); margin-bottom: 20px;">Desempenho dos Alunos</h3>
+        <table class="students-table">
+            <thead>
+                <tr>
+                    <th>Aluno</th>
+                    <th>E-mail</th>
+                    <th>Trilha Atual</th>
+                    <th>Progresso</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="studentsList">
+                <tr>
+                    <td style="font-weight: 600;">Ana Silva</td>
+                    <td>ana.silva@email.com</td>
+                    <td>Web Moderno</td>
+                    <td>
+                        <div class="progress-container">
+                            <div class="progress-bar"><div class="progress-fill" style="width: 85%;"></div></div>
+                            <span style="font-size: 12px; font-weight: 700; min-width: 30px;">85%</span>
+                        </div>
+                    </td>
+                    <td><span class="status-badge status-active">ATIVO</span></td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600;">Bruno Souza</td>
+                    <td>bruno.souza@email.com</td>
+                    <td>Introdução IA</td>
+                    <td>
+                        <div class="progress-container">
+                            <div class="progress-bar"><div class="progress-fill" style="width: 42%;"></div></div>
+                            <span style="font-size: 12px; font-weight: 700; min-width: 30px;">42%</span>
+                        </div>
+                    </td>
+                    <td><span class="status-badge status-active">ATIVO</span></td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600;">Marcos Polo</td>
+                    <td>marcos.polo@email.com</td>
+                    <td>Web Moderno</td>
+                    <td>
+                        <div class="progress-container">
+                            <div class="progress-bar"><div class="progress-fill" style="width: 15%;"></div></div>
+                            <span style="font-size: 12px; font-weight: 700; min-width: 30px;">15%</span>
+                        </div>
+                    </td>
+                    <td><span class="status-badge status-inactive">INATIVO</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Recuperar sessão e verificar permissão
+    const session = localStorage.getItem('crescer_user');
+    if (session) {
+        const user = JSON.parse(session);
+        if (user.role !== 'professor' && user.role !== 'gestor') {
+            window.location.href = 'login.html';
+        }
+        
+        // Atualizar interface com dados do usuário
+        document.getElementById('profName').textContent = user.name;
+        document.getElementById('welcomeText').innerHTML = `Olá, <span>Prof. ${user.name.split(' ')[0]}</span>!`;
+        const initials = user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+        document.getElementById('avatarBox').textContent = initials;
+        
+    } else {
+        window.location.href = 'login.html';
+    }
+
+    function logout() {
+        localStorage.removeItem('crescer_user');
+    }
+
+    // Menu Mobile Toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const body = document.body;
+
+    function toggleMenu() {
+        body.classList.toggle('sidebar-open');
+    }
+
+    menuToggle.addEventListener('click', toggleMenu);
+    sidebarOverlay.addEventListener('click', toggleMenu);
+
+    // Fechar menu ao clicar em um item no mobile
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 1024) {
+                body.classList.remove('sidebar-open');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
